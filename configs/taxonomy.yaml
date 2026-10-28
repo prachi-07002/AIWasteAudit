@@ -1,0 +1,100 @@
+# Self-defined contamination taxonomy.
+#
+# Each class is evaluated relative to `stream_type` (see sites.yaml / audit
+# records) — an item can be a contaminant in one stream and correct in
+# another. `hazard_flag` marks items needing separate remediation
+# (sharps/biohazard) rather than just a sorting correction.
+#
+# Add classes here first; labeling in Roboflow/CVAT should mirror this list
+# exactly so exports map 1:1 onto training classes.
+
+streams:
+  - recycling
+  - compost
+  - landfill
+
+classes:
+  # --- Correct-stream recyclables ---
+  - name: pet_plastic_bottle
+    material_category: plastic
+    correct_stream: recycling
+    hazard_flag: false
+
+  - name: aluminum_can
+    material_category: metal
+    correct_stream: recycling
+    hazard_flag: false
+
+  - name: cardboard_clean
+    material_category: paper
+    correct_stream: recycling
+    hazard_flag: false
+
+  - name: glass_bottle
+    material_category: glass
+    correct_stream: recycling
+    hazard_flag: false
+
+  # --- Correct-stream compost ---
+  - name: food_scraps
+    material_category: organic
+    correct_stream: compost
+    hazard_flag: false
+
+  # --- Common contaminants ---
+  - name: plastic_bag_film
+    material_category: plastic
+    correct_stream: landfill
+    hazard_flag: false
+    notes: "Frequent recycling contaminant; jams MRF sorting equipment."
+
+  - name: cardboard_greasy
+    material_category: paper
+    correct_stream: compost   # or landfill depending on local rules
+    hazard_flag: false
+    notes: "e.g. pizza boxes — food-soiled paper, common near cafes."
+
+  - name: food_soiled_container
+    material_category: plastic
+    correct_stream: landfill
+    hazard_flag: false
+
+  - name: liquid_residue
+    material_category: n/a
+    correct_stream: n/a
+    hazard_flag: false
+    notes: "Flag at item level (e.g. 'bottle_with_liquid'); affects whole-load contamination."
+
+  - name: textile
+    material_category: fabric
+    correct_stream: landfill
+    hazard_flag: false
+
+  # --- Hazard-flagged contaminants ---
+  - name: pipette
+    material_category: plastic
+    correct_stream: landfill   # or dedicated sharps/biohazard stream
+    hazard_flag: true
+    notes: "Lab contaminant; needs sharps-safe handling, not just re-sorting."
+
+  - name: syringe_needle
+    material_category: mixed
+    correct_stream: n/a
+    hazard_flag: true
+
+  - name: battery
+    material_category: mixed
+    correct_stream: n/a
+    hazard_flag: true
+
+# source_context tags let you group classes by *where they typically
+# originate* for the dashboard's "top contaminant per site type" view.
+# This is a hint, not a hard constraint — actual attribution comes from
+# the site the audit was taken at, not the class itself.
+source_context_hints:
+  pipette: lab
+  syringe_needle: lab
+  battery: lab_or_office
+  cardboard_greasy: food_service
+  food_soiled_container: food_service
+  food_scraps: food_service

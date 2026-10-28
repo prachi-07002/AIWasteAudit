@@ -1,0 +1,27 @@
+# Core CV / ML
+ultralytics>=8.2.0        # YOLOv8/11 detection + segmentation
+opencv-python-headless>=4.9.0
+# tensorflow is optional and not yet built for Python 3.13
+tensorflow>=2.16.0; python_version < "3.13"        # optional second-stage classifier (EfficientNetV2 etc.)
+numpy>=1.26.0
+Pillow>=10.3.0
+
+# Vision-language classifier (interim, until a YOLO-seg checkpoint exists)
+anthropic>=1.7.0
+
+# App / interface
+streamlit>=1.50.0
+plotly>=5.22.0
+
+# Data / DB
+SQLAlchemy>=2.0.0
+psycopg2-binary>=2.9.9    # Postgres driver
+pydantic>=2.7.0
+pandas>=2.2.0
+PyYAML>=6.0.1
+
+# Dev / tooling
+pytest>=8.2.0
+black>=24.4.0
+ruff>=0.4.0
+python-dotenv>=1.0.1

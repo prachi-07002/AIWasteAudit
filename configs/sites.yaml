@@ -1,0 +1,60 @@
+sites:
+- site_id: example-lab-220
+  site_name: Chem Building Rm 220
+  site_type: lab
+  bin_type: recycling
+  gps: null
+- site_id: example-cafe-union
+  site_name: Student Union Cafe
+  site_type: food_service
+  bin_type: compost
+  gps: null
+- site_id: demo-office-admin
+  site_name: "DEMO \xB7 Administration Office"
+  site_type: office
+  bin_type: recycling
+  bin_configuration: Demo collection bin
+  gps: null
+  is_demo: true
+- site_id: demo-dorm-north
+  site_name: "DEMO \xB7 North Residence Hall"
+  site_type: dorm
+  bin_type: recycling
+  bin_configuration: Demo collection bin
+  gps: null
+  is_demo: true
+- site_id: demo-outdoor-quad
+  site_name: "DEMO \xB7 Campus Quad"
+  site_type: outdoor_public
+  bin_type: landfill
+  bin_configuration: Demo collection bin
+  gps: null
+  is_demo: true
+- site_id: demo-cafe-dining
+  site_name: "DEMO \xB7 Dining Hall"
+  site_type: food_service
+  bin_type: compost
+  bin_configuration: Demo collection bin
+  gps: null
+  is_demo: true
+- site_id: demo-lab-materials
+  site_name: "DEMO \xB7 Materials Laboratory"
+  site_type: lab
+  bin_type: recycling
+  bin_configuration: Demo collection bin
+  gps: null
+  is_demo: true
+- site_id: demo-other-events
+  site_name: "DEMO \xB7 Event Collection Point"
+  site_type: other
+  bin_type: landfill
+  bin_configuration: Demo collection bin
+  gps: null
+  is_demo: true
+site_types:
+- lab
+- food_service
+- office
+- dorm
+- outdoor_public
+- other

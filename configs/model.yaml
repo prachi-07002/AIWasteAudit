@@ -1,0 +1,42 @@
+# Detection/segmentation model config (Ultralytics YOLO-seg).
+# Class list here should be generated from configs/taxonomy.yaml
+# (see scripts/build_yolo_dataset_yaml.py) rather than duplicated by hand.
+
+model:
+  architecture: yolov8s-seg   # start small; move to yolov8m/l-seg as data grows
+  input_size: 960              # bumped above default 640 — small items (e.g. pipettes)
+                                # lose too much resolution at 640 on a full tarp photo
+  pretrained: true
+
+training:
+  epochs: 150
+  batch_size: 16
+  patience: 30                 # early stopping
+  augment:
+    mosaic: true
+    tiling: true                # helps small/rare-object recall (pipettes, batteries)
+    hsv_h: 0.015
+    hsv_s: 0.5
+    hsv_v: 0.4
+
+data:
+  dataset_yaml: data/annotations/dataset.yaml   # generated, see scripts/
+  train_split: 0.8
+  val_split: 0.1
+  test_split: 0.1
+
+inference:
+  confidence_threshold: 0.35
+  iou_threshold: 0.5
+
+# Interim vision-language classifier (src/waste_audit/classification/vlm_classifier.py).
+# Estimates sort-category percentages from a whole-bag photo so the app has a
+# real model behind it before the YOLO-seg checkpoint above exists. This is a
+# stopgap, not the end state — it does no per-item detection and no hazard flagging.
+vlm:
+  model: claude-sonnet-5       # vision-capable; ~$2/$10 per 1M tokens
+  effort: low                  # start low for the area estimate; raise to
+                               # medium/high if breakdowns look careless on real photos
+  max_tokens: 4096
+  category_set: fine           # fine: the sort-sheet categories; coarse: their groups.
+                               # Both defined in configs/sort_categories.yaml.

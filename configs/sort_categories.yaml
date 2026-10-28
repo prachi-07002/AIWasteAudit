@@ -1,0 +1,218 @@
+# Audit sort categories: the canonical list, from Patrick's hand-sort sheet.
+#
+# This is the ONE place to edit category names, coarse groups, and streams.
+# The VLM classifier, the app's results screen, and scoring against a hand
+# sort all read from here (src/waste_audit/classification/sort_categories.py).
+#
+# Two category sets are derived from this file (configs/model.yaml -> vlm.category_set):
+#   fine:   the categories below, one-to-one with the sort sheet
+#   coarse: the groups below; a fine breakdown or hand sort rolls up by summing
+#           its categories into their `group`
+#
+# `description` is sent to the model verbatim, so write it as visual cues
+# for telling the category apart from its neighbours.
+#
+# `stream_confirmed: false` marks a stream assignment that is a best guess and
+# still needs confirming with Purdue sustainable operations. Change `stream`
+# here when it's confirmed; nothing else needs editing.
+#
+# `material` picks the weighting factor (from `material_classes`) used to turn
+# area % into an estimated weight % (src/waste_audit/pipeline/weight.py).
+# Fine categories use their own `material`; the coarse set uses the group's.
+# A category or group without one gets `default_material`.
+#
+# Exactly one category is the `fallback`: where the model puts anything
+# unidentifiable or obscured. Its group is the fallback in the coarse set.
+#
+# This is separate from configs/taxonomy.yaml, which lists the item classes
+# for the future YOLO-seg detector (pipettes, batteries, hazard flags).
+
+streams:
+  - recycling
+  - landfill
+
+# Weighting factor D per material class: estimated weight share is
+# area % x D, renormalized. Provisional values from Aaron. These are relative
+# (only ratios matter), and are meant to be replaced by factors fit on staged
+# scenes.
+material_classes:
+  paper: 1.0
+  plastic: 1.3
+  metal: 4.0
+  glass: 3.0
+  trash: 1.5
+  other: 1.5
+default_material: other
+
+groups:
+  - key: paper
+    label: Paper
+    material: paper
+    icon: description
+  - key: cardboard
+    label: Cardboard
+    material: paper
+    icon: inventory_2
+  - key: plastic_containers
+    label: Plastic containers
+    material: plastic
+    icon: water_bottle
+  - key: metal
+    label: Metal
+    material: metal
+    icon: hardware
+  - key: glass
+    label: Glass
+    material: glass
+    icon: wine_bar
+  - key: cups
+    label: Cups
+    material: plastic   # placeholder: cups mixes paper and plastic
+    icon: local_cafe
+  - key: other_landfill
+    label: Other landfill
+    material: trash
+    icon: delete
+
+categories:
+  - key: paper
+    label: Paper
+    group: paper
+    material: paper
+    stream: recycling
+    stream_confirmed: true
+    icon: description
+    description: >-
+      Paper: office and printer paper, newspaper, magazines, envelopes, mail,
+      notebooks, paper bags. Not cups, not cardboard or paperboard boxes.
+
+  - key: cardboard
+    label: Cardboard and paperboard
+    group: cardboard
+    material: paper
+    stream: recycling
+    stream_confirmed: true
+    icon: inventory_2
+    description: >-
+      Cardboard and paperboard: corrugated and shipping boxes, cereal and snack
+      boxes, paperboard packaging, egg cartons, paper towel tubes.
+
+  - key: plastic_1
+    label: "Plastic #1"
+    group: plastic_containers
+    material: plastic
+    stream: recycling
+    stream_confirmed: true
+    icon: water_bottle
+    description: >-
+      Plastic #1 (PET): clear water and soda bottles, clear clamshells, clear
+      deli and salad containers. Not cups.
+
+  - key: plastic_2_jugs
+    label: "Plastic #2 jugs"
+    group: plastic_containers
+    material: plastic
+    stream: recycling
+    stream_confirmed: true
+    icon: local_drink
+    description: >-
+      Plastic #2 jugs (HDPE): milk jugs, juice jugs, detergent and cleaner
+      jugs; opaque, thick-walled bottles, often with a handle.
+
+  - key: plastic_5
+    label: "Plastic #5"
+    group: plastic_containers
+    material: plastic
+    stream: recycling
+    stream_confirmed: false
+    icon: takeout_dining
+    description: >-
+      Plastic #5 (PP): yogurt and margarine tubs, rigid takeout containers and
+      their lids, rigid translucent food containers. Not cups.
+
+  - key: metal_cans
+    label: Metal cans
+    group: metal
+    material: metal
+    stream: recycling
+    stream_confirmed: true
+    icon: hardware
+    description: >-
+      Metal cans: aluminum beverage cans and steel food cans.
+
+  - key: glass_bottles
+    label: Glass bottles
+    group: glass
+    material: glass
+    stream: recycling
+    stream_confirmed: false
+    icon: wine_bar
+    description: >-
+      Glass bottles: glass bottles and jars, clear or colored, whole or broken.
+
+  - key: plastic_cups
+    label: "Plastic cups #1/#5"
+    group: cups
+    material: plastic
+    stream: recycling
+    stream_confirmed: false   # includes #5, which is unconfirmed
+    icon: local_drink
+    description: >-
+      Plastic cups #1/#5: clear or translucent rigid plastic drink cups, such
+      as iced-coffee, smoothie, and fountain-drink cups.
+
+  - key: paper_cups
+    label: Paper cups
+    group: cups
+    material: paper
+    stream: landfill
+    stream_confirmed: false
+    icon: coffee
+    description: >-
+      Paper cups: paper hot-drink and coffee cups, paper fountain-drink cups.
+
+  - key: styrofoam
+    label: Styrofoam
+    group: other_landfill
+    material: plastic
+    stream: landfill
+    stream_confirmed: true
+    icon: bubble_chart
+    description: >-
+      Styrofoam (expanded polystyrene foam): foam cups, foam clamshells and
+      plates, packing foam and peanuts.
+
+  - key: soft_plastics
+    label: Soft plastics
+    group: other_landfill
+    material: plastic
+    stream: landfill
+    stream_confirmed: true
+    icon: shopping_bag
+    description: >-
+      Soft plastics: plastic bags, film, shrink wrap, chip and candy wrappers,
+      pouches, bubble wrap; anything thin and flexible.
+
+  - key: organics
+    label: Organics
+    group: other_landfill
+    material: trash
+    stream: landfill
+    stream_confirmed: true
+    icon: compost
+    description: >-
+      Organics: food scraps, fruit and vegetable waste, coffee grounds, plant
+      material.
+
+  - key: landfill_office
+    label: Landfill/office waste
+    group: other_landfill
+    material: trash
+    stream: landfill
+    stream_confirmed: true
+    fallback: true
+    icon: delete
+    description: >-
+      Landfill/office waste: used napkins, tissues and paper towels, plastic
+      utensils, pens, mixed-material items, anything soiled, and anything
+      unidentifiable, obscured, or not covered by another category.
